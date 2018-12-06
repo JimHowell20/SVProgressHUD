@@ -592,7 +592,7 @@ static const CGFloat SVProgressHUDDefaultAnimationDuration = 0.15;
 
 - (void)updateViewHierachy {
     // Add the overlay (e.g. black, gradient) to the application window if necessary
-    if(!self.overlayView.superview) {
+    if ( YES ) {
 #if !defined(SV_APP_EXTENSIONS)
         // Default case: iterate over UIApplication windows
         NSEnumerator *frontToBackWindows = [UIApplication.sharedApplication.windows reverseObjectEnumerator];
@@ -601,8 +601,28 @@ static const CGFloat SVProgressHUDDefaultAnimationDuration = 0.15;
             BOOL windowIsVisible = !window.hidden && window.alpha > 0;
             BOOL windowLevelNormal = window.windowLevel == UIWindowLevelNormal;
             
-            if(windowOnMainScreen && windowIsVisible && windowLevelNormal) {
-                [window.rootViewController.view addSubview:self.overlayView];
+            if( windowOnMainScreen && windowIsVisible && windowLevelNormal )
+            {
+                UIViewController * presentedViewController = window.rootViewController.presentedViewController;
+                UIViewController * rootViewController = window.rootViewController;
+                
+                // add progress indicator on top most view controller, but don’t put progress indicator on top of alerts
+                if ( presentedViewController && ![self.overlayView.superview isEqual:presentedViewController.view] &&
+                    ![[presentedViewController class] isKindOfClass:[UIAlertController class]]  )
+                {
+                    [presentedViewController.view addSubview:self.overlayView];
+                }
+                else if ( !presentedViewController && rootViewController.view &&
+                          ![self.overlayView.superview isEqual:rootViewController.view] )
+                {
+                    [rootViewController.view addSubview:self.overlayView];
+                }
+                else
+                {
+                    // don’t need to add overlay view to subview, bring it to front of view stack stack
+                    [self.overlayView.superview bringSubviewToFront:self.overlayView];
+                }
+                
                 break;
             }
         }
