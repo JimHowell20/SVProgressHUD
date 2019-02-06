@@ -584,9 +584,9 @@ static const CGFloat SVProgressHUDDefaultAnimationDuration = 0.15;
         UIMotionEffectGroup *effectGroup = [[UIMotionEffectGroup alloc] init];
         effectGroup.motionEffects = @[effectX, effectY];
         
-        // Clear old motion effect, then add new motion effects
-        self.hudView.motionEffects = @[];
-        [self.hudView addMotionEffect:effectGroup];
+//        // Clear old motion effect, then add new motion effects
+//        self.hudView.motionEffects = @[];
+//        [self.hudView addMotionEffect:effectGroup];
     }
 }
 
